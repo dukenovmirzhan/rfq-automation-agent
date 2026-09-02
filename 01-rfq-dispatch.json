@@ -1,0 +1,92 @@
+{
+  "name": "RFQ Dispatch",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "71cc6673-485c-44bf-b1cb-14efe80a6031",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "toRecipients": "buyer@example.com",
+        "subject": "Запрос КП [RFQ-TEST-001] Ручка шариковая",
+        "bodyContent": "Добрый день!\n\nПрошу предоставить коммерческое предложение:\n\nНаименование: ручка шариковая\nКоличество: 10 шт.\n\nВ ответе просьба указать: цену за единицу, срок поставки, условия оплаты.\n\nВАЖНО: отвечайте, пожалуйста, кнопкой «Ответить», не меняя тему письма. Иначе система не сопоставит ваш ответ с запросом.\n\nС уважением,\nотдел закупок",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        352,
+        0
+      ],
+      "id": "ef7c6be9-7249-447f-b968-2d21ac5ebe49",
+      "name": "Send a message",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "YOUR_OUTLOOK_CREDENTIAL_ID",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const params = {\n  code: 'RFQ-TEST-001',\n  item: 'Ручка шариковая',\n  qty: 10\n};\n\nconst suppliers = [\n  'buyer@example.com',\n];\n\nreturn suppliers.map(email => ({ json: { ...params, email } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        0
+      ],
+      "id": "a5951a50-1858-47d6-84ac-4df16e447072",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
